@@ -1,4 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
+from flask import request
+import json
 
 todos = [
     { "label": "My first task", "done": False },
@@ -7,20 +9,28 @@ todos = [
 
 app = Flask(__name__)
 
+
 @app.route('/todos', methods=['GET'])
 def hello_world():
+    # return "<h1>Hello!</h1>"
     json_text = jsonify(todos)
     return json_text
-
+    
 @app.route('/todos', methods=['POST'])
 def add_new_todo():
     request_body = request.data
+    decoded_object = json.loads(request_body)
+    todos.append(decoded_object)
     print("Incoming request with the following body", request_body)
-    json_data = json.loads(request_body)
-    json_data [{"label": "My third task", "done": False}]
-    response_body = json.dumps(json_data)
+    return jsonify(todos)
 
-    return jsonify(response_body)
+@app.route('/todos/<int:position>', methods=['DELETE'])
+def delete_todo(position):
+    print("This is the position to delete: ",position)
+    del todos[0]
+    return todos
+
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=3245, debug=True)
+
